@@ -1,4 +1,5 @@
-'use strict';
+/* jshint strict: false */
+// 'use strict';
 
 describe('Service: geolocation', function () {
 
@@ -27,18 +28,20 @@ describe('Service: geolocation', function () {
     expect(results).toEqual({ coords : { latitude : 32, longitude : -96 } });
   });
 
-  it('should not obtain user location due to missing geolocation', function () {
+  it('should not obtain user location due to missing geolocation', function (done) {
     var results,old_navigator;
     spyOn($rootScope, '$broadcast');
     old_navigator = $window.navigator;
     $window.navigator = {geolocation:false};
     geolocation.getLocation().then(function(){},function(error) {
       results = error;
+      expect($rootScope.$broadcast).toHaveBeenCalledWith('error',geolocation_msgs['errors.location.unsupportedBrowser']);
+      expect(results).toEqual(geolocation_msgs['errors.location.unsupportedBrowser']);
+      $window.navigator = old_navigator;
+      done();
     });
+
     $rootScope.$digest();
-    expect($rootScope.$broadcast).toHaveBeenCalledWith('error',geolocation_msgs['errors.location.unsupportedBrowser']);
-    expect(results).toEqual(geolocation_msgs['errors.location.unsupportedBrowser']);
-    $window.navigator = old_navigator;
   });
 
   it('should not obtain user location due to rejected permission', function () {

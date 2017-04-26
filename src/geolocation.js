@@ -16,32 +16,28 @@ angular.module('geolocation')
           $window.navigator.geolocation.getCurrentPosition(function(position){
             $rootScope.$apply(function(){deferred.resolve(position);});
           }, function(error) {
-            switch (error.code) {
-              case 1:
-                $rootScope.$broadcast('error',geolocation_msgs['errors.location.permissionDenied']);
-                $rootScope.$apply(function() {
+            $rootScope.$apply(function() {
+              switch (error.code) {
+                case 1:
+                  $rootScope.$broadcast('error',geolocation_msgs['errors.location.permissionDenied']);
                   deferred.reject(geolocation_msgs['errors.location.permissionDenied']);
-                });
-                break;
-              case 2:
-                $rootScope.$broadcast('error',geolocation_msgs['errors.location.positionUnavailable']);
-                $rootScope.$apply(function() {
+                  break;
+                case 2:
+                  $rootScope.$broadcast('error',geolocation_msgs['errors.location.positionUnavailable']);
                   deferred.reject(geolocation_msgs['errors.location.positionUnavailable']);
-                });
-                break;
-              case 3:
-                $rootScope.$broadcast('error',geolocation_msgs['errors.location.timeout']);
-                $rootScope.$apply(function() {
+                  break;
+                case 3:
+                  $rootScope.$broadcast('error',geolocation_msgs['errors.location.timeout']);
                   deferred.reject(geolocation_msgs['errors.location.timeout']);
-                });
-                break;
-            }
+                  break;
+              }              
+            });
           }, opts);
         }
         else
         {
           $rootScope.$broadcast('error',geolocation_msgs['errors.location.unsupportedBrowser']);
-          $rootScope.$apply(function(){deferred.reject(geolocation_msgs['errors.location.unsupportedBrowser']);});
+          deferred.reject(geolocation_msgs['errors.location.unsupportedBrowser']);
         }
         return deferred.promise;
       }
